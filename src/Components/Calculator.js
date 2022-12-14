@@ -23,42 +23,56 @@ class Calculator extends React.Component {
     handleChange(event) {
         const newNumber = event.target.innerText;
 
-        if (this.state.input === "0" || isNaN(this.state.input)) {
+        function containsNumbers(str) {
+            return /\d/.test(str);
+        }
+
+        if (this.state.input === "0" || this.state.input === "+" || this.state.input === "x" || this.state.input === "/") {
+
             this.setState({
                 input: newNumber,
                 output: this.state.output + newNumber,
             })
-        } else {
+
+        } else if (this.state.input === "-" && containsNumbers(this.state.output.slice(-2, -1))) {
+
+            this.setState({
+                input: newNumber,
+                output: this.state.output + newNumber,
+            })
+
+        } else if (this.state.input === "-" && !containsNumbers(this.state.output.slice(-2, -1))) {
+
+            this.setState({
+                input: -newNumber,
+                output: this.state.output + newNumber,
+            })
+
+        }
+
+        else {
+
             this.setState({
                 input: "" + this.state.input + newNumber,
                 output: "" + this.state.output + newNumber,
             });
+
         }
     }
 
     handleOperation(event) {
 
-        if (!isNaN(this.state.input) || event.target.innerText === "-") {
+        if (!isNaN(this.state.input)) {
 
-            if (event.target.innerText === "-") {
-                const newOperation = event.target.innerText;
-                this.setState({
-                    output: "" + this.state.output + newOperation,
-                    input: this.state.input + newOperation,
-                })
-            } else {
-                const newOperation = event.target.innerText;
+            const newOperation = event.target.innerText;
 
-                this.state.numbers.push(Number(this.state.input));
+            this.state.numbers.push(Number(this.state.input));
 
-                this.setState({
-                    output: "" + this.state.output + newOperation,
-                    operations: [...this.state.operations, newOperation],
-                    input: newOperation,
-                })
-
-            }
-
+            this.setState({
+                output: "" + this.state.output + newOperation,
+                operations: [...this.state.operations, newOperation],
+                input: newOperation,
+            })
 
         } else {
             this.state.operations.pop();
@@ -72,6 +86,29 @@ class Calculator extends React.Component {
 
         }
 
+    }
+
+    handleOperationSub(event) {
+        const subOperation = event.target.innerText;
+
+        if (this.state.output.slice(-1) >= '0' && this.state.output.slice(-1) <= '9') {
+
+            this.state.numbers.push(Number(this.state.input));
+            this.setState({
+                output: "" + this.state.output + subOperation,
+                operations: [...this.state.operations, subOperation],
+                input: subOperation,
+            })
+        } else {
+
+            if (this.state.output.slice(-1) !== "-") {
+                this.setState({
+                    output: "" + this.state.output + subOperation,
+                    operations: [...this.state.operations],
+                    input: subOperation,
+                })
+            }
+        }
     }
 
     handleDot(event) {
@@ -153,7 +190,7 @@ class Calculator extends React.Component {
                     </div>
                     <div className='flex w-2/4'>
                         <button id="nine" onClick={this.handleChange.bind(this)} className={buttonStyle + " w-6/12"}>9</button>
-                        <button id="subtract" onClick={this.handleOperation.bind(this)} className={buttonStyle + " w-6/12"}>-</button>
+                        <button id="subtract" onClick={this.handleOperationSub.bind(this)} className={buttonStyle + " w-6/12"}>-</button>
                     </div>
                 </div>
 
