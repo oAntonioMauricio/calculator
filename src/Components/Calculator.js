@@ -145,7 +145,14 @@ class Calculator extends React.Component {
             }
         }
 
-        if (this.state.operations.length > 0) {
+        if (this.state.output.length > 18) {
+            this.setState({
+                input: "Limit Reached",
+                output: "Limit Reached",
+                operations: [],
+                numbers: [],
+            })
+        } else if (this.state.operations.length > 0) {
             this.setState({
                 input: Number(result),
                 output: this.state.output + "=" + result,
